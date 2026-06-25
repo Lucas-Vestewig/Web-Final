@@ -1,4 +1,6 @@
 <script>
+	let { origem = $bindable('USD'), destino = $bindable('BRL') } = $props();
+
 	const moedas = [
 		{ codigo: 'BRL', nome: 'Real Brasileiro', simbolo: 'R$' },
 		{ codigo: 'USD', nome: 'Dólar Americano', simbolo: '$' },
@@ -7,8 +9,6 @@
 	];
 
 	let valor = $state(1);
-	let origem = $state('USD');
-	let destino = $state('BRL');
 	let resultado = $state(null);
 	let resultado2 = $state(null);
 	let carregando = $state(false);

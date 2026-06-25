@@ -1,13 +1,16 @@
 <script>
 	import Conversor from '$lib/Conversor.svelte';
 	import Grafico from '$lib/Grafico.svelte';
+
+	let origem = $state('USD');
+	let destino = $state('BRL');
 </script>
 
 <div class="layout">
-	<Conversor />
+	<Conversor bind:origem bind:destino />
 
 	<div class="grafico-container">
-		<Grafico />
+		<Grafico {origem} {destino} />
 	</div>
 </div>
 
@@ -18,10 +21,12 @@
 		align-items: flex-start;
 		justify-content: center;
 		padding: 2rem;
+		flex-wrap: wrap;
 	}
 
 	.grafico-container {
 		width: 800px;
+		max-width: 100%;
 		min-height: 500px;
 
 		background: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%);
