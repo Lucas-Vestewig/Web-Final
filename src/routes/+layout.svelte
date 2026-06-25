@@ -21,7 +21,7 @@
 	:global(body) {
 		background-color: #0d0d1a;
 		background-image:
-			radial-gradient(ellipse at 20% 20%, rgba(173, 25, 214, 0.08) 0%, transparent 60%),
+			radial-gradient(ellipse at 20% 20%, rgba(105, 15, 129, 0.08) 0%, transparent 60%),
 			radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.07) 0%, transparent 60%);
 		background-attachment: fixed;
 		color: #e2e8f0;
