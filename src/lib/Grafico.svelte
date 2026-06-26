@@ -1,4 +1,6 @@
 <script>
+	import { t } from '$lib/i18n.js';
+
 	let { origem, destino } = $props();
 
     const W = 700;
@@ -135,45 +137,46 @@
 
 <div class="chart-wrap">
 
-	<!-- 🎚️ CONTROLE DE INTERVALO -->
-	<div class="chart-controls">
-		<label>
-			Intervalo: {intervalo} dias
-			<input
-				type="range"
-				min="1"
-				max="30"
-				bind:value={intervalo}
-			/>
-		</label>
-	</div>
-
-	<!-- 🧠 PAINEL DE HOVER -->
-	<div class="chart-hover-panel">
-		{#if hover}
-			<div><b>Data:</b> {formatData(hover.tempo)}</div>
-			<div><b>Valor:</b> {hover.valor}</div>
-			<div><b>ID:</b> {hover.id}</div>
-		{:else}
-			<div>Passe o mouse em um ponto do gráfico</div>
-		{/if}
-	</div>
-
-	{#if carregando}
-		<div class="chart-state">
-			<div class="spinner"></div>
-			<p>Carregando histórico…</p>
+	<div class="chart-header">
+		<div class="chart-controls">
+			<label for="intervalo-range">
+				<span class="controls-label"
+					>{t('interval')}: <strong>{intervalo} {t('days')}</strong></span
+				>
+				<input
+					id="intervalo-range"
+					type="range"
+					min="1"
+					max="30"
+					bind:value={intervalo}
+				/>
+			</label>
 		</div>
 
-	{:else if erro || pontos.length === 0}
+		<div class="chart-hover-panel">
+			<div class="hover-row">
+				<b>{t('date')}:</b>
+				<span>{hover ? formatData(hover.tempo) : '—'}</span>
+			</div>
+			<div class="hover-row">
+				<b>{t('value')}:</b>
+				<span class:muted={!hover}
+					>{hover ? hover.valor.toFixed(4) : t('hoverHint')}</span
+				>
+			</div>
+		</div>
+	</div>
+
+	<div class="chart-body">
+	{#if erro && pontos.length === 0 && !carregando}
 		<div class="chart-state">
-			<p>Não foi possível carregar o histórico para {origem} → {destino}.</p>
+			<p>{t('errorHistory', { from: origem, to: destino })}</p>
 		</div>
 
-	{:else}
+	{:else if pontos.length > 0}
 
 		<svg viewBox="0 0 {W} {H}" class="chart"
-			aria-label="Gráfico de câmbio {origem} para {destino}">
+			aria-label={t('chartAria', { from: origem, to: destino })}>
 
 			<defs>
 				<linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
@@ -241,21 +244,42 @@
 				<circle
 					cx={c.x}
 					cy={c.y}
+					r="12"
+					fill="transparent"
+					class="hit-area"
+					onmouseenter={() => hover = c}
+					onmouseleave={() => hover = null}
+				/>
+				<circle
+					cx={c.x}
+					cy={c.y}
 					r="4"
 					fill="white"
 					stroke="black"
 					stroke-width="2"
-					onmouseenter={() => hover = c}
-					onmouseleave={() => hover = null}
+					class="dot"
+					pointer-events="none"
 				/>
 			{/each}
 
 		</svg>
 
+	{:else if !carregando}
+		<div class="chart-state">
+			<p>{t('noData', { from: origem, to: destino })}</p>
+		</div>
 	{/if}
 
+	{#if carregando}
+		<div class="chart-loading-overlay" aria-busy="true">
+			<div class="spinner"></div>
+			<p>{t('loadingHistory')}</p>
+		</div>
+	{/if}
+	</div>
+
 	<p class="grafico-footer">
-		Últimos {intervalo} dias · dados via frankfurter.app
+		{t('chartFooter', { n: intervalo })}
 	</p>
 
 </div>
@@ -334,30 +358,111 @@
 
 /* 📈 CHART */
 .chart-wrap {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
     min-height: 340px;
+}
 
+.chart-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.chart-controls label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.controls-label {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted-2);
+}
+
+.controls-label strong {
+    color: var(--color-accent-soft);
+    font-family: 'Roboto Mono', monospace;
+}
+
+.chart-controls input[type='range'] {
+    width: 100%;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+}
+
+.chart-hover-panel {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-card-border);
+    border-radius: 12px;
+    background: var(--color-surface);
+    font-size: 0.8125rem;
+    color: var(--color-text-muted-2);
+    min-height: 3.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.hover-row {
+    display: flex;
+    gap: 0.5rem;
+    line-height: 1.5;
+    min-height: 1.25rem;
+}
+
+.chart-hover-panel b {
+    color: var(--color-accent-light);
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.hover-row .muted {
+    color: var(--color-text-subtle);
+    font-style: italic;
+}
+
+.chart-body {
+    position: relative;
+    flex-shrink: 0;
+    height: 340px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
 
-    overflow: hidden;
+.chart-loading-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    background: var(--color-overlay);
+    border-radius: 12px;
+    color: var(--color-text-muted-2);
+    font-size: 0.875rem;
+    z-index: 1;
 }
 
 .chart {
     width: 100%;
-    height: 100%;
+    max-height: 340px;
     display: block;
 }
 
 /* GRID */
 .grid-line {
-    stroke: rgba(255, 255, 255, 0.06);
+    stroke: var(--color-grid);
     stroke-width: 1;
 }
 
 .axis-label {
-    fill: #475569;
+    fill: var(--color-text-subtle);
     font-size: 10px;
     font-family: 'Roboto Mono', monospace;
 }
@@ -369,6 +474,10 @@
     stroke-width: 2;
 }
 
+.hit-area {
+    cursor: pointer;
+}
+
 /* STATES */
 .chart-state {
     display: flex;
@@ -376,17 +485,17 @@
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    color: #475569;
+    color: var(--color-text-subtle);
     font-size: 0.875rem;
     text-align: center;
-    min-height: 280px;
+    height: 100%;
 }
 
 .spinner {
     width: 32px;
     height: 32px;
     border: 2.5px solid rgba(249, 115, 22, 0.15);
-    border-top-color: #f97316;
+    border-top-color: var(--color-accent);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
@@ -400,7 +509,7 @@
 /* FOOTER */
 .grafico-footer {
     font-size: 0.6875rem;
-    color: #334155;
+    color: var(--color-chart-footer);
     text-align: center;
 }
 </style>

@@ -1,15 +1,35 @@
 <script>
+	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
+	import Toolbar from '$lib/Toolbar.svelte';
+	import {
+		settings,
+		initSettings,
+		persistSettings
+	} from '$lib/settings.svelte.js';
 
 	let { children } = $props();
+
+	initSettings();
+
+	$effect(() => {
+		document.documentElement.setAttribute('data-theme', settings.theme);
+		document.documentElement.lang = settings.lang === 'en' ? 'en' : 'pt-BR';
+		persistSettings();
+	});
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
+		rel="stylesheet"
+	/>
 </svelte:head>
+
+<Toolbar />
 
 <style>
 	:global(*, *::before, *::after) {
@@ -17,19 +37,17 @@
 		margin: 0;
 		padding: 0;
 	}
- 
+
 	:global(body) {
-		background-color: #0d0d1a;
+		background-color: var(--color-bg);
 		background-image:
-			radial-gradient(ellipse at 20% 20%, rgba(105, 15, 129, 0.08) 0%, transparent 60%),
-			radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.07) 0%, transparent 60%);
+			radial-gradient(ellipse at 20% 20%, var(--color-bg-gradient-1) 0%, transparent 60%),
+			radial-gradient(ellipse at 80% 80%, var(--color-bg-gradient-2) 0%, transparent 60%);
 		background-attachment: fixed;
-		color: #e2e8f0;
+		color: var(--color-text);
 		font-family: 'Roboto', sans-serif;
 		min-height: 100vh;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		transition: background-color 0.25s ease, color 0.25s ease;
 	}
 </style>
 

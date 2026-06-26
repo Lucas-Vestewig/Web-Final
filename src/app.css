@@ -1,0 +1,86 @@
+:root,
+[data-theme='dark'] {
+	--color-bg: #0d0d1a;
+	--color-bg-gradient-1: rgba(105, 15, 129, 0.08);
+	--color-bg-gradient-2: rgba(59, 130, 246, 0.07);
+	--color-text: #e2e8f0;
+	--color-text-muted: #64748b;
+	--color-text-muted-2: #94a3b8;
+	--color-text-subtle: #475569;
+	--color-text-placeholder: #2d3748;
+	--color-text-input: #fefff5;
+	--color-text-select: #cbd5e1;
+	--color-accent: #f97316;
+	--color-accent-light: #fb923c;
+	--color-accent-soft: #fdba74;
+	--color-card-bg: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%);
+	--color-card-border: rgba(249, 115, 22, 0.18);
+	--color-card-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+	--color-surface: rgba(255, 255, 255, 0.04);
+	--color-surface-2: rgba(255, 255, 255, 0.02);
+	--color-surface-border: rgba(255, 255, 255, 0.12);
+	--color-surface-border-soft: rgba(255, 255, 255, 0.06);
+	--color-surface-border-top: rgba(255, 255, 255, 0.05);
+	--color-accent-surface: rgba(249, 115, 22, 0.07);
+	--color-accent-border: rgba(249, 115, 22, 0.25);
+	--color-accent-border-soft: rgba(249, 115, 22, 0.18);
+	--color-overlay: rgba(13, 13, 26, 0.72);
+	--color-select-option-bg: #1a1a2e;
+	--color-grid: rgba(255, 255, 255, 0.06);
+	--color-chart-footer: #334155;
+	--color-link-hover: #ffffff;
+	--color-hero-strong: #94a3b8;
+	--color-toolbar-bg: rgba(26, 26, 46, 0.85);
+	--color-toolbar-border: rgba(249, 115, 22, 0.2);
+	--color-result-active-bg: linear-gradient(
+		135deg,
+		rgba(249, 115, 22, 0.06) 0%,
+		rgba(255, 255, 255, 0.03) 100%
+	);
+	--color-to-val-gradient: linear-gradient(90deg, #ffffff 0%, #fdba74 50%, #f97316 100%);
+	--color-title-gradient: linear-gradient(100deg, #faff9c 0%, #fdba74 50%, #f97316 100%);
+	--color-title-sub-gradient: linear-gradient(90deg, #f97316, #faff9c);
+}
+
+[data-theme='light'] {
+	--color-bg: #f1f5f9;
+	--color-bg-gradient-1: rgba(249, 115, 22, 0.1);
+	--color-bg-gradient-2: rgba(59, 130, 246, 0.08);
+	--color-text: #1e293b;
+	--color-text-muted: #64748b;
+	--color-text-muted-2: #475569;
+	--color-text-subtle: #64748b;
+	--color-text-placeholder: #94a3b8;
+	--color-text-input: #0f172a;
+	--color-text-select: #334155;
+	--color-accent: #ea580c;
+	--color-accent-light: #f97316;
+	--color-accent-soft: #fb923c;
+	--color-card-bg: linear-gradient(160deg, #ffffff 0%, #f8fafc 100%);
+	--color-card-border: rgba(249, 115, 22, 0.22);
+	--color-card-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+	--color-surface: rgba(15, 23, 42, 0.04);
+	--color-surface-2: rgba(15, 23, 42, 0.03);
+	--color-surface-border: rgba(15, 23, 42, 0.12);
+	--color-surface-border-soft: rgba(15, 23, 42, 0.08);
+	--color-surface-border-top: rgba(15, 23, 42, 0.08);
+	--color-accent-surface: rgba(249, 115, 22, 0.08);
+	--color-accent-border: rgba(249, 115, 22, 0.3);
+	--color-accent-border-soft: rgba(249, 115, 22, 0.2);
+	--color-overlay: rgba(248, 250, 252, 0.88);
+	--color-select-option-bg: #ffffff;
+	--color-grid: rgba(15, 23, 42, 0.08);
+	--color-chart-footer: #94a3b8;
+	--color-link-hover: #ea580c;
+	--color-hero-strong: #475569;
+	--color-toolbar-bg: rgba(255, 255, 255, 0.92);
+	--color-toolbar-border: rgba(249, 115, 22, 0.25);
+	--color-result-active-bg: linear-gradient(
+		135deg,
+		rgba(249, 115, 22, 0.08) 0%,
+		rgba(15, 23, 42, 0.02) 100%
+	);
+	--color-to-val-gradient: linear-gradient(90deg, #0f172a 0%, #fb923c 50%, #ea580c 100%);
+	--color-title-gradient: linear-gradient(100deg, #0a0a0a 0%, #1e293b 55%, #0f172a 100%);
+	--color-title-sub-gradient: linear-gradient(90deg, #0f172a, #334155);
+}

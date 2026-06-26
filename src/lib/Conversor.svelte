@@ -1,11 +1,13 @@
 <script>
+	import { t, currencyName, locale } from '$lib/i18n.js';
+
 	let { origem = $bindable('USD'), destino = $bindable('BRL') } = $props();
 
 	const moedas = [
-		{ codigo: 'BRL', nome: 'Real Brasileiro', simbolo: 'R$' },
-		{ codigo: 'USD', nome: 'Dólar Americano', simbolo: '$' },
-		{ codigo: 'EUR', nome: 'Euro', simbolo: '€' },
-		{ codigo: 'GBP', nome: 'Libra Esterlina', simbolo: '£' }
+		{ codigo: 'BRL', simbolo: 'R$' },
+		{ codigo: 'USD', simbolo: '$' },
+		{ codigo: 'EUR', simbolo: '€' },
+		{ codigo: 'GBP', simbolo: '£' }
 	];
 
 	let valor = $state(1);
@@ -47,28 +49,15 @@
 
 	$effect(() => { valor; origem; destino; converter(); });
 </script>
-<!-- Hero / Título -->
-	<header class="hero">
-		<div class="logo-ring">
-  			{getSimbol(destino)}
-		</div>
-		<h1>Converte Câmbio <span class="da-silva">da Silva</span></h1>
-		<p class="hero-desc">
-			Projeto web construído com <strong>Svelte</strong> e <strong>Dart</strong>,
-			consumindo a API pública
-			<a href="https://api.frankfurter.app/" target="_blank" rel="noopener noreferrer">frankfurter.app</a>
-			para cotações em tempo real.
-		</p>
-	</header>
 
 	<!-- Card conversor -->
 	<div class="card">
 
-		<p class="card-instruction">Digite o valor e escolha as moedas para converter.</p>
+		<p class="card-instruction">{t('cardInstruction')}</p>
 
 		<!-- Valor -->
 		<div class="field">
-			<label for="valor">Valor</label>
+			<label for="valor">{t('value')}</label>
 			<div class="input-wrap">
 				<span class="sym">{getSimbol(origem)}</span>
 				<input id="valor" type="number" bind:value={valor} min="0" step="any" />
@@ -79,27 +68,31 @@
 		<!-- Moedas -->
 		<div class="currencies">
 			<div class="field">
-				<label for="origem">De</label>
+				<label for="origem">{t('from')}</label>
 				<div class="sel-wrap">
 					<select id="origem" bind:value={origem}>
 						{#each moedas as m}
-							<option value={m.codigo}>{m.simbolo} {m.codigo} — {m.nome}</option>
+							<option value={m.codigo}
+								>{m.simbolo} {m.codigo} — {currencyName(m.codigo)}</option
+							>
 						{/each}
 					</select>
 					<svg class="arr" viewBox="0 0 24 24" fill="none"><path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
 				</div>
 			</div>
 
-			<button class="btn-inv" onclick={inverter} aria-label="Inverter moedas">
+			<button class="btn-inv" onclick={inverter} aria-label={t('invert')}>
 				<svg viewBox="0 0 24 24" fill="none"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
 			</button>
 
 			<div class="field">
-				<label for="destino">Para</label>
+				<label for="destino">{t('to')}</label>
 				<div class="sel-wrap">
 					<select id="destino" bind:value={destino}>
 						{#each moedas as m}
-							<option value={m.codigo}>{m.simbolo} {m.codigo} — {m.nome}</option>
+							<option value={m.codigo}
+								>{m.simbolo} {m.codigo} — {currencyName(m.codigo)}</option
+							>
 						{/each}
 					</select>
 					<svg class="arr" viewBox="0 0 24 24" fill="none"><path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -114,7 +107,10 @@
 			{:else if resultado !== null}
 				<div class="conversion-display">
 					<div class="from-line">
-						<span class="from-val">{getSimbol(origem)} {Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+						<span class="from-val"
+							>{getSimbol(origem)}
+							{Number(valor).toLocaleString(locale(), { minimumFractionDigits: 2 })}</span
+						>
 						<span class="from-label">{origem}</span>
 					</div>
 					<div class="arrow-line">
@@ -124,19 +120,22 @@
 						</svg>
 					</div>
 					<div class="to-line">
-						<span class="to-val">{getSimbol(destino)} {resultado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+						<span class="to-val"
+							>{getSimbol(destino)}
+							{resultado.toLocaleString(locale(), { minimumFractionDigits: 2 })}</span
+						>
 						<span class="to-label">{destino}</span>
 					</div>
 				</div>
 			{:else}
-				<p class="placeholder">Preencha o valor acima para ver a conversão</p>
+				<p class="placeholder">{t('placeholder')}</p>
 			{/if}
 		</div>
 
 		<!-- Cotação atual -->
 		{#if resultado2 !== null && !carregando}
 			<div class="quote-footer">
-				<span class="quote-label">Cotação atual</span>
+				<span class="quote-label">{t('currentQuote')}</span>
 				<span class="quote-value">1 {origem} = <strong>{resultado2.toFixed(4)}</strong> {destino}</span>
 			</div>
 		{/if}
@@ -144,87 +143,10 @@
 	</div>
 	
 <style>
-	main {
-		width: 100%;
-		min-height: 100vh;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		padding: 2.5rem 1.25rem;
-	}
-
-	/* Hero */
-	.hero {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		text-align: center;
-		margin-bottom: 2rem;
-		gap: 0.875rem;
-		max-width: 440px;
-	}
-
-	.logo-ring {
-		width: 56px;
-		height: 56px;
-		border-radius: 50%;
-		background: linear-gradient(135deg, #e8690e, #f2e862f4);
-		display: flex;
-		align-items: center;
-		font-size: 1.8rem;      /* ← adiciona isso */
-  		font-weight: 8000;       /* ← e isso */
-		justify-content: center;
-		color: #ffffff;
-		box-shadow: 0 0 28px rgba(249,115,22,0.45), 0 0 0 6px rgba(249,115,22,0.12);
-	}
-
-	h1 {
-		font-size: 2rem;
-		font-weight: 700;
-		line-height: 1.15;
-		letter-spacing: -0.03em;
-		background: linear-gradient(100deg, #faff9c 0%, #fdba74 50%, #f97316 100%);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-	}
-
-	.da-silva {
-		display: block;
-		font-size: 0.875rem;
-		font-weight: 700;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		background: linear-gradient(90deg, #f97316, #faff9c);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-		opacity: 0.75;
-		margin-top: 0.1rem;
-	}
-
-	.hero-desc {
-		font-size: 0.8125rem;
-		color: #64748b;
-		line-height: 1.65;
-	}
-
-	.hero-desc strong { color: #94a3b8; font-weight: 500; }
-
-	.hero-desc a {
-		color: #fb923c;
-		text-decoration: none;
-		border-bottom: 1px solid rgba(251,146,60,0.3);
-		transition: color 0.2s;
-	}
-
-	.hero-desc a:hover { color: #ffffff; }
-
 	/* Card */
 	.card {
-		background: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%);
-		border: 1px solid rgba(249,115,22,0.18);
+		background: var(--color-card-bg);
+		border: 1px solid var(--color-card-border);
 		border-radius: 28px;
 		padding: 2rem 1.75rem;
 		width: 100%;
@@ -232,12 +154,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1.25rem;
-		box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(249,115,22,0.04);
+		box-shadow: var(--color-card-shadow), 0 0 0 1px rgba(249, 115, 22, 0.04);
+		transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 	}
 
 	.card-instruction {
 		font-size: 0.8125rem;
-		color: #475569;
+		color: var(--color-text-subtle);
 		text-align: center;
 		line-height: 1.5;
 	}
@@ -256,35 +179,35 @@
 		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.1em;
-		color: #f97316;
+		color: var(--color-accent);
 	}
 
 	.input-wrap {
 		display: flex;
 		align-items: center;
-		background: rgba(255,255,255,0.04);
-		border: 1px solid rgba(249,115,22,0.25);
+		background: var(--color-surface);
+		border: 1px solid var(--color-accent-border);
 		border-radius: 16px;
 		overflow: hidden;
 		transition: border-color 0.2s, box-shadow 0.2s;
 	}
 
 	.input-wrap:focus-within {
-		border-color: #f97316;
-		box-shadow: 0 0 0 3px rgba(249,115,22,0.15);
+		border-color: var(--color-accent);
+		box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
 	}
 
 	.sym {
 		padding: 0 0.75rem;
 		font-size: 1rem;
-		color: #fb923c;
+		color: var(--color-accent-light);
 		font-weight: 600;
 		font-family: 'Roboto Mono', monospace;
-		border-right: 1px solid rgba(249,115,22,0.18);
+		border-right: 1px solid var(--color-accent-border-soft);
 		align-self: stretch;
 		display: flex;
 		align-items: center;
-		background: rgba(249,115,22,0.07);
+		background: var(--color-accent-surface);
 	}
 
 	input[type='number'] {
@@ -292,12 +215,11 @@
 		background: transparent;
 		border: none;
 		outline: none;
-		color: #fefff5;
+		color: var(--color-text-input);
 		font-family: 'Roboto Mono', monospace;
 		font-size: 1.25rem;
 		font-weight: 500;
 		padding: 0.875rem;
-		/* Remove the native spinner arrows */
 		-moz-appearance: textfield;
 	}
 
@@ -313,7 +235,7 @@
 		padding: 0 0.875rem;
 		font-size: 0.75rem;
 		font-weight: 600;
-		color: #475569;
+		color: var(--color-text-subtle);
 		font-family: 'Roboto Mono', monospace;
 		letter-spacing: 0.05em;
 	}
@@ -330,10 +252,10 @@
 	select {
 		width: 100%;
 		appearance: none;
-		background: rgba(255,255,255,0.04);
-		border: 1px solid rgba(255,255,255,0.12);
+		background: var(--color-surface);
+		border: 1px solid var(--color-surface-border);
 		border-radius: 14px;
-		color: #cbd5e1;
+		color: var(--color-text-select);
 		font-family: 'Roboto', sans-serif;
 		font-size: 0.8125rem;
 		font-weight: 500;
@@ -344,11 +266,14 @@
 
 	select:focus {
 		outline: none;
-		border-color: #f97316;
-		box-shadow: 0 0 0 3px rgba(249,115,22,0.13);
+		border-color: var(--color-accent);
+		box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.13);
 	}
 
-	select option { background: #1a1a2e; color: #e2e8f0; }
+	select option {
+		background: var(--color-select-option-bg);
+		color: var(--color-text);
+	}
 
 	.arr {
 		position: absolute;
@@ -357,7 +282,7 @@
 		transform: translateY(-50%);
 		width: 15px;
 		height: 15px;
-		color: #475569;
+		color: var(--color-text-subtle);
 		pointer-events: none;
 	}
 
@@ -365,9 +290,9 @@
 		width: 44px;
 		height: 44px;
 		border-radius: 14px;
-		border: 1px solid rgba(249,115,22,0.3);
-		background: rgba(249,115,22,0.1);
-		color: #fb923c;
+		border: 1px solid var(--color-accent-border);
+		background: var(--color-accent-surface);
+		color: var(--color-accent-light);
 		cursor: pointer;
 		display: flex;
 		align-items: center;
@@ -380,17 +305,17 @@
 	.btn-inv svg { width: 18px; height: 18px; }
 
 	.btn-inv:hover {
-		background: rgba(249,115,22,0.22);
-		border-color: #f97316;
-		box-shadow: 0 0 14px rgba(249,115,22,0.28);
+		background: rgba(249, 115, 22, 0.22);
+		border-color: var(--color-accent);
+		box-shadow: 0 0 14px rgba(249, 115, 22, 0.28);
 	}
 
 	.btn-inv:active { transform: scale(0.9); }
 
 	/* Result */
 	.result-block {
-		background: rgba(255,255,255,0.02);
-		border: 1px solid rgba(255,255,255,0.06);
+		background: var(--color-surface-2);
+		border: 1px solid var(--color-surface-border-soft);
 		border-radius: 20px;
 		padding: 1.5rem 1.25rem;
 		display: flex;
@@ -401,8 +326,8 @@
 	}
 
 	.result-block.active {
-		border-color: rgba(249,115,22,0.2);
-		background: linear-gradient(135deg, rgba(249,115,22,0.06) 0%, rgba(255,255,255,0.03) 100%);
+		border-color: var(--color-card-border);
+		background: var(--color-result-active-bg);
 	}
 
 	.conversion-display {
@@ -423,13 +348,13 @@
 		font-family: 'Roboto Mono', monospace;
 		font-size: 1.125rem;
 		font-weight: 500;
-		color: #94a3b8;
+		color: var(--color-text-muted-2);
 	}
 
 	.from-label {
 		font-size: 0.75rem;
 		font-weight: 600;
-		color: #475569;
+		color: var(--color-text-subtle);
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
 	}
@@ -440,7 +365,7 @@
 		font-family: 'Roboto Mono', monospace;
 		font-size: 2.125rem;
 		font-weight: 700;
-		background: linear-gradient(90deg, #ffffff 0%, #fdba74 50%, #f97316 100%);
+		background: var(--color-to-val-gradient);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-clip: text;
@@ -450,14 +375,14 @@
 	.to-label {
 		font-size: 0.875rem;
 		font-weight: 600;
-		color: #64748b;
+		color: var(--color-text-muted);
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
 	}
 
 	.placeholder {
 		font-size: 0.8125rem;
-		color: #2d3748;
+		color: var(--color-text-placeholder);
 		font-style: italic;
 		text-align: center;
 	}
@@ -465,8 +390,8 @@
 	.spinner {
 		width: 28px;
 		height: 28px;
-		border: 2.5px solid rgba(249,115,22,0.15);
-		border-top-color: #f97316;
+		border: 2.5px solid rgba(249, 115, 22, 0.15);
+		border-top-color: var(--color-accent);
 		border-radius: 50%;
 		animation: spin 0.8s linear infinite;
 	}
@@ -480,7 +405,7 @@
 		align-items: center;
 		gap: 0.3rem;
 		padding-top: 0.5rem;
-		border-top: 1px solid rgba(255,255,255,0.05);
+		border-top: 1px solid var(--color-surface-border-top);
 	}
 
 	.quote-label {
@@ -488,18 +413,18 @@
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.16em;
-		color: #fb923c;
+		color: var(--color-accent-light);
 		opacity: 0.65;
 	}
 
 	.quote-value {
 		font-size: 0.8125rem;
-		color: #475569;
+		color: var(--color-text-subtle);
 		font-family: 'Roboto Mono', monospace;
 	}
 
 	.quote-value strong {
-		color: #fb923c;
+		color: var(--color-accent-light);
 		font-weight: 600;
 	}
 
